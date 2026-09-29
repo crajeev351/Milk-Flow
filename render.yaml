@@ -1,0 +1,24 @@
+# MilkFlow Render Infrastructure as Code Blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: milkflow-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 2
+    rootDir: backend
+    plan: free
+    region: singapore # Closest region to India for minimum latency
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false # Set to your free Neon.tech PostgreSQL connection string in Render Dashboard
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://milkflow.vercel.app

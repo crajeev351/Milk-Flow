@@ -1,0 +1,21 @@
+name: 24/7 Keep-Alive Ping (Zero Free Tier Cold Boots)
+
+on:
+  schedule:
+    # Runs every 14 minutes to prevent Render Free Tier's 15-minute idle sleep
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  ping-keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping MilkFlow Backend Health Check
+        run: |
+          echo "Pinging MilkFlow Cloud API..."
+          TARGET_URL="${{ secrets.RENDER_BACKEND_URL }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="https://milkflow-api.onrender.com/health"
+          fi
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$TARGET_URL" || true)
+          echo "Keep-alive response code: $HTTP_STATUS from $TARGET_URL"
