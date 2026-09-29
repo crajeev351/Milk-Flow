@@ -29,27 +29,6 @@ def seed():
     db.commit()
 
     print("Seeding Users & Business Profile...")
-    admin = User(
-        email="admin@milkflow.com",
-        password_hash=get_password_hash("password123"),
-        full_name="Rajesh Sharma",
-        phone="9876543210",
-        role="admin",
-        is_active=True
-    )
-    worker = User(
-        email="worker@milkflow.com",
-        password_hash=get_password_hash("worker123"),
-        full_name="Santosh Jadhav",
-        phone="9823456789",
-        role="worker",
-        is_active=True
-    )
-    db.add_all([admin, worker])
-    db.commit()
-    db.refresh(admin)
-    db.refresh(worker)
-
     biz = Business(
         name="Shree Krishna Dairy & Milk Services",
         owner_name="Rajesh Sharma",
@@ -67,9 +46,28 @@ def seed():
     db.commit()
     db.refresh(biz)
 
-    admin.business_id = biz.id
-    worker.business_id = biz.id
+    admin = User(
+        business_id=biz.id,
+        email="admin@milkflow.com",
+        password_hash=get_password_hash("password123"),
+        full_name="Rajesh Sharma",
+        phone="9876543210",
+        role="admin",
+        is_active=True
+    )
+    worker = User(
+        business_id=biz.id,
+        email="worker@milkflow.com",
+        password_hash=get_password_hash("worker123"),
+        full_name="Santosh Jadhav",
+        phone="9823456789",
+        role="worker",
+        is_active=True
+    )
+    db.add_all([admin, worker])
     db.commit()
+    db.refresh(admin)
+    db.refresh(worker)
 
     print("Seeding Products & Price History...")
     today = date.today()

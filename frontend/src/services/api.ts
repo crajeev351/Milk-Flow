@@ -5,7 +5,15 @@ import {
   DeliveryNotification, DeliveryNotificationListResponse, SingleDeliveryRecordResponse
 } from '../types';
 
-const API_BASE = '/api/v1';
+const getApiBase = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    return `${envUrl.trim().replace(/\/$/, '')}/api/v1`;
+  }
+  return '/api/v1';
+};
+
+const API_BASE = getApiBase();
 
 class ApiService {
   private tokenKey = 'milkflow_token';
