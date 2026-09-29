@@ -2,10 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 
-# Normalize postgres:// to postgresql:// for SQLAlchemy 2.0 compatibility
+# Normalize database URL to use psycopg2 explicitly for PostgreSQL in SQLAlchemy 2.0
 db_url = settings.DATABASE_URL
 if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+    db_url = db_url.replace("postgres://", "postgresql+psycopg2://", 1)
+elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 engine_kwargs = {"pool_pre_ping": True}
 
